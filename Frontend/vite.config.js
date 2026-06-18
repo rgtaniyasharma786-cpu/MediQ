@@ -11,11 +11,11 @@ export default defineConfig(({ mode }) => {
     historyApiFallback: true,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:5000',
+        target: process.env.VITE_API_URL,
         changeOrigin: true,
       },
       '/socket.io': {
-        target: process.env.VITE_SOCKET_URL || 'http://localhost:5000',
+        target: process.env.VITE_SOCKET_URL,
         changeOrigin: true,
         ws: true,
       },
@@ -28,7 +28,23 @@ export default defineConfig(({ mode }) => {
   },
   build: {
     outDir: 'dist',
-   
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+        if (id.includes('react')) {
+          return 'vendor'
+        }
+
+        if (id.includes('recharts')) {
+          return 'charts'
+        }
+
+        if (id.includes('socket.io-client')) {
+          return 'socket'
+        }
+      },
+      },
+    },
   },
   }
 })
