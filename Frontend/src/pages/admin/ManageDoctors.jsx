@@ -84,7 +84,7 @@ function DoctorModal({ doctor, onClose, onSave }) {
   return (
     /* ── backdrop covers full screen including sidebar ── */
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex justify-center p-4"
       style={{ background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
@@ -526,10 +526,10 @@ export default function ManageDoctors() {
   const unavailable = doctors.length - available;
 
   return (
-    <div className="space-y-6 max-w-8xl">
+    <div className=" max-w-8xl">
 
       {/* ── Page header ── */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 ">
         <div>
           <h1 className="page-title">Manage Doctors</h1>
           <p className="text-slate-500 text-sm mt-1">
@@ -545,7 +545,7 @@ export default function ManageDoctors() {
       </div>
 
       {/* ── Summary stats ── */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-4 my-6">
         {[
           {
             label: 'Total Doctors',
@@ -623,7 +623,7 @@ export default function ManageDoctors() {
         </div>
       ) : (
         <>
-          <p className="text-xs text-slate-400 font-medium">
+          <p className="text-xs text-slate-400 font-medium my-6">
             Showing {filtered.length} of {doctors.length} doctor{doctors.length !== 1 ? 's' : ''}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">

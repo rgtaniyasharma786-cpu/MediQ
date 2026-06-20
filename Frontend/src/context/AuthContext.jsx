@@ -96,14 +96,6 @@
 
 // // export default AuthContext;
 
-
-
-
-
-
-
-
-
 // import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 // import { authAPI } from '../services/api';
 // import { initSocket, disconnectSocket } from '../services/socket';
@@ -202,24 +194,27 @@
 
 // export default AuthContext;
 
-
-
-
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { authAPI } from '../services/api';
-import { initSocket, disconnectSocket } from '../services/socket';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { authAPI } from "../services/api";
+import { initSocket, disconnectSocket } from "../services/socket";
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]       = useState(null);
+  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // logout defined first with useCallback
   const logout = useCallback(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setUser(null);
     setProfile(null);
     disconnectSocket();
@@ -231,7 +226,7 @@ export const AuthProvider = ({ children }) => {
       const res = await authAPI.getMe();
       setUser(res.data.user);
       setProfile(res.data.profile);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      localStorage.setItem("user", JSON.stringify(res.data.user));
     } catch {
       logout();
     } finally {
@@ -240,11 +235,16 @@ export const AuthProvider = ({ children }) => {
   }, [logout]);
 
   useEffect(() => {
-    const token     = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    const token = localStorage.getItem("token");
+    const savedUser = localStorage.getItem("user");
     if (token && savedUser) {
-      try { setUser(JSON.parse(savedUser)); initSocket(); fetchMe(); }
-      catch { logout(); }
+      try {
+        setUser(JSON.parse(savedUser));
+        initSocket();
+        fetchMe();
+      } catch {
+        logout();
+      }
     } else {
       setLoading(false);
     }
@@ -253,22 +253,30 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const res = await authAPI.login({ email, password });
     const { token, user } = res.data;
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
     setUser(user);
-    initSocket();
-    await fetchMe();
+    try {
+      initSocket();
+    } catch (err) {
+      console.error("Socket initialization failed:", err);
+    }
+    await fetchMe().catch((err) => {
+      console.error("fetchMe failed:", err);
+    });
     return user;
   };
 
   const updateUser = (updates) => {
     const updated = { ...user, ...updates };
     setUser(updated);
-    localStorage.setItem('user', JSON.stringify(updated));
+    localStorage.setItem("user", JSON.stringify(updated));
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, login, logout, updateUser, fetchMe }}>
+    <AuthContext.Provider
+      value={{ user, profile, loading, login, logout, updateUser, fetchMe }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -276,7 +284,7 @@ export const AuthProvider = ({ children }) => {
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 };
 

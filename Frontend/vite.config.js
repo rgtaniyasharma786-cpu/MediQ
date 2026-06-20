@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
   //     '/socket.io': {
   //       target: process.env.VITE_SOCKET_URL || 'http://localhost:5000',
   //       changeOrigin: true,
-  //       ws: true,
+  //       ws: true,delete my project
   //     },
   //   },
   // },
